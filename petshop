@@ -1,0 +1,408 @@
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+
+
+
+
+@dataclass
+class Pet:
+    id: int
+    nome: str
+    raca: str
+    idade: int
+    tipo: str  # mamifero | peixe | ave
+
+
+@dataclass
+class Cliente:
+    id: int
+    nome: str
+    endereco: str
+    pets: List[int] = field(default_factory=list)
+
+
+@dataclass
+class Funcionario:
+    id: int
+    nome: str
+    endereco: str
+    salario: float
+    tipo: str 
+    crmv: Optional[str] = None  
+
+
+@dataclass
+class Produto:
+    id: int
+    nome: str
+    valor: float
+    descricao: str
+
+
+
+
+
+class Repositorios:
+    def __init__(self):
+        self.clientes: Dict[int, Cliente] = {}
+        self.pets: Dict[int, Pet] = {}
+        self.funcionarios: Dict[int, Funcionario] = {}
+        self.produtos: Dict[int, Produto] = {}
+        self.estoque: Dict[int, int] = {}
+
+        self._prox_cliente = 1
+        self._prox_pet = 1
+        self._prox_funcionario = 1
+        self._prox_produto = 1
+
+    def novo_id_cliente(self) -> int:
+        self._prox_cliente += 1
+        return self._prox_cliente - 1
+
+    def novo_id_pet(self) -> int:
+        self._prox_pet += 1
+        return self._prox_pet - 1
+
+    def novo_id_funcionario(self) -> int:
+        self._prox_funcionario += 1
+        return self._prox_funcionario - 1
+
+    def novo_id_produto(self) -> int:
+        self._prox_produto += 1
+        return self._prox_produto - 1
+
+
+db = Repositorios()
+
+
+def ler_str(prompt: str) -> str:
+    while True:
+        v = input(prompt).strip()
+        if v:
+            return v
+        print("Valor não pode ser vazio.")
+
+
+def ler_int(prompt: str, minimo: Optional[int] = None) -> int:
+    while True:
+        v = input(prompt).strip()
+        try:
+            n = int(v)
+            if minimo is not None and n < minimo:
+                print(f"Valor deve ser >= {minimo}.")
+                continue
+            return n
+        except ValueError:
+            print("Inteiro inválido.")
+
+
+def ler_float(prompt: str, minimo: Optional[float] = None) -> float:
+    while True:
+        v = input(prompt).strip().replace(",", ".")
+        try:
+            n = float(v)
+            if minimo is not None and n < minimo:
+                print(f"Valor deve ser >= {minimo}.")
+                continue
+            return n
+        except ValueError:
+            print("Número inválido.")
+
+
+def ler_tipo_pet() -> str:
+    while True:
+        t = input("Tipo do pet (mamifero/peixe/ave): ").strip().lower()
+        if t in {"mamifero", "peixe", "ave"}:
+            return t
+        print("Tipo inválido.")
+
+
+def ler_tipo_funcionario() -> str:
+    while True:
+        t = input("Tipo do funcionário (gestor/veterinario): ").strip().lower()
+        if t in {"gestor", "veterinario"}:
+            return t
+        print("Tipo inválido.")
+
+
+
+def cadastrar_cliente() -> None:
+    nome = ler_str("Nome do cliente: ")
+    endereco = ler_str("Endereço do cliente: ")
+    cid = db.novo_id_cliente()
+    db.clientes[cid] = Cliente(id=cid, nome=nome, endereco=endereco)
+    print(f"Cliente cadastrado com id {cid}.")
+
+
+def cadastrar_pet() -> None:
+    nome = ler_str("Nome do pet: ")
+    raca = ler_str("Raça do pet: ")
+    idade = ler_int("Idade do pet (anos): ", minimo=0)
+    tipo = ler_tipo_pet()
+    pid = db.novo_id_pet()
+    db.pets[pid] = Pet(id=pid, nome=nome, raca=raca, idade=idade, tipo=tipo)
+    print(f"Pet cadastrado com id {pid}.")
+    if input("Associar a um cliente agora? (s/n): ").strip().lower() == "s":
+        associar_pet_cliente(pid)
+
+
+def associar_pet_cliente(pet_id: Optional[int] = None) -> None:
+    if pet_id is None:
+        pet_id = ler_int("Id do pet: ", minimo=1)
+    if pet_id not in db.pets:
+        print("Pet não encontrado.")
+        return
+    cliente_id = ler_int("Id do cliente: ", minimo=1)
+    if cliente_id not in db.clientes:
+        print("Cliente não encontrado.")
+        return
+    if pet_id in db.clientes[cliente_id].pets:
+        print("Este pet já está associado a este cliente.")
+        return
+    db.clientes[cliente_id].pets.append(pet_id)
+    print("Pet associado ao cliente.")
+
+
+def cadastrar_funcionario() -> None:
+    nome = ler_str("Nome do funcionário: ")
+    endereco = ler_str("Endereço do funcionário: ")
+    salario = ler_float("Salário (R$): ", minimo=0.0)
+    tipo = ler_tipo_funcionario()
+    crmv = None
+    if tipo == "veterinario":
+        crmv = ler_str("CRMV: ")
+    fid = db.novo_id_funcionario()
+    db.funcionarios[fid] = Funcionario(id=fid, nome=nome, endereco=endereco, salario=salario, tipo=tipo, crmv=crmv)
+    print(f"Funcionário cadastrado com id {fid}.")
+
+
+def cadastrar_produto() -> None:
+    nome = ler_str("Nome do produto: ")
+    valor = ler_float("Valor do produto (R$): ", minimo=0.0)
+    descricao = ler_str("Descrição do produto: ")
+    pr_id = db.novo_id_produto()
+    db.produtos[pr_id] = Produto(id=pr_id, nome=nome, valor=valor, descricao=descricao)
+    db.estoque.setdefault(pr_id, 0)
+    print(f"Produto cadastrado com id {pr_id}.")
+
+
+def remover_cliente() -> None:
+    cid = ler_int("Id do cliente: ", minimo=1)
+    if cid not in db.clientes:
+        print("Cliente não encontrado.")
+        return
+    # desassociar pets (opcional manter)
+    db.clientes.pop(cid)
+    print("Cliente removido.")
+
+
+def remover_pet() -> None:
+    pid = ler_int("Id do pet: ", minimo=1)
+    if pid not in db.pets:
+        print("Pet não encontrado.")
+        return
+    # remover de todos os clientes
+    for c in db.clientes.values():
+        if pid in c.pets:
+            c.pets.remove(pid)
+    db.pets.pop(pid)
+    print("Pet removido.")
+
+
+def remover_produto() -> None:
+    pr_id = ler_int("Id do produto: ", minimo=1)
+    if pr_id not in db.produtos:
+        print("Produto não encontrado.")
+        return
+    db.produtos.pop(pr_id)
+    db.estoque.pop(pr_id, None)
+    print("Produto removido.")
+
+
+def remover_funcionario() -> None:
+    fid = ler_int("Id do funcionário: ", minimo=1)
+    if fid not in db.funcionarios:
+        print("Funcionário não encontrado.")
+        return
+    db.funcionarios.pop(fid)
+    print("Funcionário removido.")
+
+
+def buscar_pets_por_raca() -> None:
+    r = ler_str("Raça: ").lower()
+    encontrados = [p for p in db.pets.values() if p.raca.lower() == r]
+    if not encontrados:
+        print("Nenhum pet encontrado.")
+        return
+    for p in encontrados:
+        print(f"{p.id} - {p.nome} ({p.tipo}) - {p.raca}")
+
+
+def buscar_pets_por_tipo() -> None:
+    t = ler_tipo_pet()
+    encontrados = [p for p in db.pets.values() if p.tipo == t]
+    if not encontrados:
+        print("Nenhum pet encontrado.")
+        return
+    for p in encontrados:
+        print(f"{p.id} - {p.nome} - {p.raca}")
+
+
+def buscar_endereco_cliente() -> None:
+    nome = ler_str("Nome do cliente: ").lower()
+    for c in db.clientes.values():
+        if c.nome.lower() == nome:
+            print(f"Endereço: {c.endereco}")
+            return
+    print("Cliente não encontrado.")
+
+
+def buscar_salario_funcionario() -> None:
+    nome = ler_str("Nome do funcionário: ").lower()
+    for f in db.funcionarios.values():
+        if f.nome.lower() == nome:
+            print(f"Salário de {f.nome}: R${f.salario:.2f}")
+            return
+    print("Funcionário não encontrado.")
+
+
+
+def estoque_adicionar() -> None:
+    pr_id = ler_int("Id do produto: ", minimo=1)
+    if pr_id not in db.produtos:
+        print("Produto não encontrado.")
+        return
+    qtd = ler_int("Quantidade a adicionar: ", minimo=0)
+    db.estoque[pr_id] = db.estoque.get(pr_id, 0) + qtd
+    print("Estoque atualizado.")
+
+
+def estoque_retirar() -> None:
+    pr_id = ler_int("Id do produto: ", minimo=1)
+    if pr_id not in db.produtos:
+        print("Produto não encontrado.")
+        return
+    qtd = ler_int("Quantidade a retirar: ", minimo=0)
+    atual = db.estoque.get(pr_id, 0)
+    if qtd > atual:
+        print("Quantidade insuficiente em estoque.")
+        return
+    db.estoque[pr_id] = atual - qtd
+    print("Estoque atualizado.")
+
+
+
+def listar_clientes() -> None:
+    if not db.clientes:
+        print("Nenhum cliente cadastrado.")
+        return
+    for c in db.clientes.values():
+        print(f"{c.id}: {c.nome} - {c.endereco} - pets: {c.pets}")
+
+
+def listar_pets() -> None:
+    if not db.pets:
+        print("Nenhum pet cadastrado.")
+        return
+    for p in db.pets.values():
+        print(f"{p.id}: {p.nome} - {p.raca} - {p.idade} anos - {p.tipo}")
+
+
+def listar_funcionarios() -> None:
+    if not db.funcionarios:
+        print("Nenhum funcionário cadastrado.")
+        return
+    for f in db.funcionarios.values():
+        extra = f" - CRMV: {f.crmv}" if (f.tipo == "veterinario" and f.crmv) else ""
+        print(f"{f.id}: {f.nome} - {f.endereco} - {f.tipo} - R${f.salario:.2f}{extra}")
+
+
+def listar_produtos() -> None:
+    if not db.produtos:
+        print("Nenhum produto cadastrado.")
+        return
+    for pr in db.produtos.values():
+        qtd = db.estoque.get(pr.id, 0)
+        print(f"{pr.id}: {pr.nome} - R${pr.valor:.2f} - qtd: {qtd} - {pr.descricao}")
+
+
+
+def mostrar_menu() -> str:
+    print(
+        "\n=== PET SHOP ===\n"
+        "1. Cadastrar cliente\n"
+        "2. Cadastrar pet\n"
+        "3. Associar pet a cliente\n"
+        "4. Cadastrar funcionário\n"
+        "5. Cadastrar produto\n"
+        "6. Listar clientes\n"
+        "7. Listar pets\n"
+        "8. Listar funcionários\n"
+        "9. Listar produtos\n"
+        "10. Buscar pets por raça\n"
+        "11. Buscar pets por tipo\n"
+        "12. Buscar endereço de cliente\n"
+        "13. Buscar salário de funcionário\n"
+        "14. Adicionar ao estoque\n"
+        "15. Retirar do estoque\n"
+        "16. Remover cliente\n"
+        "17. Remover pet\n"
+        "18. Remover produto\n"
+        "19. Remover funcionário\n"
+        "20. Ajuda/UML\n"
+        "21. Sair\n"
+    )
+    return input("Escolha: ").strip()
+
+
+def ajuda_uml() -> None:
+    print(
+        """
+UML (texto):
+Funcionario <|-- (gestor/veterinario)
+Cliente o-- Pet (via lista de ids)
+Estoque *-- Produto (quantidade por produto)
+
+Classes:
+- Pet(id:int, nome:str, raca:str, idade:int, tipo:str)
+- Cliente(id:int, nome:str, endereco:str, pets:list[int])
+- Funcionario(id:int, nome:str, endereco:str, salario:float, tipo:str, crmv:Optional[str])
+- Produto(id:int, nome:str, valor:float, descricao:str)
+
+Operações: cadastros, buscas, exclusões e associações conforme menu.
+"""
+    )
+
+
+def main() -> None:
+    while True:
+        op = mostrar_menu()
+        if op == "1": cadastrar_cliente()
+        elif op == "2": cadastrar_pet()
+        elif op == "3": associar_pet_cliente()
+        elif op == "4": cadastrar_funcionario()
+        elif op == "5": cadastrar_produto()
+        elif op == "6": listar_clientes()
+        elif op == "7": listar_pets()
+        elif op == "8": listar_funcionarios()
+        elif op == "9": listar_produtos()
+        elif op == "10": buscar_pets_por_raca()
+        elif op == "11": buscar_pets_por_tipo()
+        elif op == "12": buscar_endereco_cliente()
+        elif op == "13": buscar_salario_funcionario()
+        elif op == "14": estoque_adicionar()
+        elif op == "15": estoque_retirar()
+        elif op == "16": remover_cliente()
+        elif op == "17": remover_pet()
+        elif op == "18": remover_produto()
+        elif op == "19": remover_funcionario()
+        elif op == "20": ajuda_uml()
+        elif op == "21":
+            print("Saindo...")
+            break
+        else:
+            print("Opção inválida.")
+
+
+if __name__ == "__main__":
+    main()
