@@ -1,27 +1,23 @@
-
-
 🐾 Sistema PetShop
-Este é um projeto acadêmico desenvolvido para a disciplina de Laboratório I de ADS, com o objetivo de Gerenciar cadastros de clientes e animais.
+
+Este é um projeto desenvolvido em Python para fins acadêmicos, com o objetivo de gerenciar o cadastro de clientes e seus respectivos pets, utilizando estruturas de dados robustas com dataclasses.
 
 🚀 Funcionalidades
-Aqui estão as principais funcionalidades implementadas no sistema:
+O sistema permite realizar o gerenciamento básico de:
 
-Cadastro de Clientes: Permite adicionar, editar e remover informações de tutores.
+Clientes: Cadastro de tutores com seus dados básicos.
 
-Gestão de Animais: Registro de pets vinculados aos seus respectivos donos.
-
-Histórico de Serviços: Registro de atendimentos, vacinas ou consultas.
-
+Pets: Registro de animais vinculados aos seus donos, incluindo informações como raça, idade e tipo (mamífero, peixe ou ave).
 
 🛠️ Tecnologias Utilizadas
-Linguagem: [Python]
+Linguagem: Python 3
 
-
-Ferramentas: [Git, IDE VSCode]
+Conceitos: Dataclasses, Type Hinting e gerenciamento de listas.
 
 📋 Como Executar o Projeto
-Siga os passos abaixo para rodar o sistema na sua máquina:
+Pré-requisitos:
 
+Certifique-se de ter o Python instalado em sua máquina.
 
 Clonando o repositório:
 
@@ -29,7 +25,13 @@ Bash
 git clone https://github.com/Pezzi02/PetShop.git
 Execução:
 
-[Explique aqui como rodar, ex: "Abra a pasta no seu editor e execute o arquivo Main.java"]
+Abra o terminal na pasta do projeto.
+
+Execute o arquivo com o comando:
+
+Bash
+python "desafio pet shop.py"
+
 
 ✒️ Autor
 Pietro Pezzi 
