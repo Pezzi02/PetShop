@@ -1,37 +1,30 @@
-🐾 Sistema PetShop
+# 🐾 Sistema PetShop
 
-Este é um projeto desenvolvido em Python para fins acadêmicos, com o objetivo de gerenciar o cadastro de clientes e seus respectivos pets, utilizando estruturas de dados robustas com dataclasses.
+Este é um projeto desenvolvido em Python para fins acadêmicos, com o objetivo de gerenciar o cadastro de clientes e seus respectivos pets, utilizando estruturas de dados robustas com `dataclasses`.
 
-🚀 Funcionalidades
+## 🚀 Funcionalidades
 O sistema permite realizar o gerenciamento básico de:
 
-Clientes: Cadastro de tutores com seus dados básicos.
+* **Clientes:** Cadastro de tutores com seus dados básicos.
+* **Pets:** Registro de animais vinculados aos seus donos, incluindo informações como raça, idade e tipo (mamífero, peixe ou ave).
 
-Pets: Registro de animais vinculados aos seus donos, incluindo informações como raça, idade e tipo (mamífero, peixe ou ave).
+## 🛠️ Tecnologias Utilizadas
+* **Linguagem:** Python 3
+* **Conceitos:** Dataclasses, Type Hinting e gerenciamento de listas.
 
-🛠️ Tecnologias Utilizadas
-Linguagem: Python 3
+## 📋 Como Executar o Projeto
 
-Conceitos: Dataclasses, Type Hinting e gerenciamento de listas.
+Você tem duas formas de executar o sistema:
 
-📋 Como Executar o Projeto
-Pré-requisitos:
+1. **Forma simplificada (Recomendada):**
+   * Basta dar um clique duplo no arquivo **`run_petshop.bat`** na pasta raiz do projeto. O script detectará automaticamente se você possui o executável ou se deve rodar via Python.
 
-Certifique-se de ter o Python instalado em sua máquina.
+2. **Via terminal (Código-fonte):**
+   * Certifique-se de ter o [Python](https://www.python.org/) instalado.
+   * Abra o terminal na pasta do projeto e execute:
+     ```bash
+     python "desafio pet shop.py"
+     ```
 
-Clonando o repositório:
-
-Bash
-git clone https://github.com/Pezzi02/PetShop.git
-Execução:
-
-Abra o terminal na pasta do projeto.
-
-Execute o arquivo com o comando:
-
-Bash
-python "desafio pet shop.py"
-
-
-✒️ Autor
-Pietro Pezzi 
+## ✒️ Autor
+* **Pietro Pezzi** - [GitHub](https://github.com/Pezzi02)
