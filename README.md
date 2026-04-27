@@ -27,4 +27,4 @@ Você tem duas formas de executar o sistema:
      ```
 
 ## ✒️ Autor
-* **Pietro Pezzi** - [GitHub](https://github.com/Pezzi02)
+* **Pietro Pezzi** - (https://github.com/Pezzi02)
