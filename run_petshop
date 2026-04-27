@@ -1,0 +1,13 @@
+@echo off
+REM Executa o PET SHOP usando o executável gerado pelo PyInstaller.
+cd /d "%~dp0"
+if exist "dist\PetShop.exe" (
+    "dist\PetShop.exe"
+) else (
+    echo Arquivo dist\PetShop.exe não encontrado.
+    echo Tentando executar com Python...
+    py -3 "desafio pet shop.py"
+)
+echo.
+echo Pressione qualquer tecla para fechar...
+pause > nul
